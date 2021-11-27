@@ -1,0 +1,9 @@
+->  host new game
+      -- create tcp server
+      --  wait untill someone connects
+          on connect render game
+
+->  join game
+      -- create tcp client 
+      --  listen user input untill a url is given 
+          on connect render game

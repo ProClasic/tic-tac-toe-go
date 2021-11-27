@@ -1,21 +1,19 @@
 package game
 
 import (
-	"github.com/nsf/termbox-go"
+	"net"
+	"strconv"
 	"time"
 	"ttt/src/utils"
+
+	"github.com/nsf/termbox-go"
 )
 
 var (
 	keyboardEventsChan = make(chan keyboardEvent)
+	isMyTurn           = false
+	symb               string
 )
-
-func flickerCursor() {
-	for {
-		blinkCursor()
-		time.Sleep(time.Millisecond * 300)
-	}
-}
 
 func moveHorizontal(mag int) {
 	for {
@@ -44,10 +42,30 @@ func validateCursor() {
 	}
 }
 
-func StartGame(symb string) {
+func resumeMyTurn() {
+	isMyTurn = true
+	cursor = 0
+
+	moveHorizontal(1)
+	flickerCursor()
+}
+
+func flickerCursor() {
+	for {
+		if !isMyTurn {
+			break
+		}
+		blinkCursor()
+		time.Sleep(time.Millisecond * 300)
+	}
+}
+
+func startGame(conn net.Conn) {
 	if err := termbox.Init(); err != nil {
 		panic(err)
 	}
+
+	termbox.HideCursor()
 	defer func() {
 		termbox.Close()
 		utils.Clrscr()
@@ -69,6 +87,9 @@ mainloop:
 		case e := <-keyboardEventsChan:
 			switch e.eventType {
 			case MOVE:
+				if !isMyTurn {
+					continue mainloop
+				}
 				board[cursor] = " "
 				switch e.key {
 				case termbox.KeyArrowRight:
@@ -81,13 +102,21 @@ mainloop:
 					moveVertical(-1)
 				}
 			case INSERT:
+				if !isMyTurn {
+					continue mainloop
+				}
 				board[cursor] = symb
-				moveHorizontal(1)
+				conn.Write([]byte(strconv.Itoa(cursor) + "e"))
+				isMyTurn = false
+				render()
+				go receive(conn)
 			case END:
 				break mainloop
 			}
 		default:
-			render()
+			if isMyTurn {
+				render()
+			}
 		}
 	}
 }

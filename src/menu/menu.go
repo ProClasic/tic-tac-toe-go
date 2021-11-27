@@ -1,14 +1,16 @@
 package menu
 
 import (
-	"github.com/nsf/termbox-go"
-	"ttt/src/utils"
-	"ttt/src/game"
 	"fmt"
+	"ttt/src/game"
+	"ttt/src/utils"
+
+	"github.com/nsf/termbox-go"
 )
 
 var (
-	menuOpts [3]string = [3]string{
+	menuCursor int
+	menuOpts   [3]string = [3]string{
 		"host new game",
 		"join game",
 		"exit",
@@ -17,12 +19,14 @@ var (
 
 func renderMenu() {
 	utils.Clrscr()
-	fmt.Println("             TIC-TAC-TOE\n")
+	fmt.Print("             TIC-TAC-TOE\n\n")
 	fmt.Printf("Hello %s\n\n", game.Username)
 	for idx, opt := range menuOpts {
 		if idx == menuCursor {
 			fmt.Print("-> ")
-		} else { fmt.Print("   ") }
+		} else {
+			fmt.Print("   ")
+		}
 		fmt.Print(opt, "\n")
 	}
 }
@@ -30,12 +34,10 @@ func renderMenu() {
 func listenKeyboard(optChan chan int) {
 	termbox.SetInputMode(termbox.InputEsc)
 
-	var menuCursor int;
-
 	for {
 		switch e := termbox.PollEvent(); e.Type {
 		case termbox.EventKey:
-		switch e.Key {
+			switch e.Key {
 			case termbox.KeyArrowDown:
 				menuCursor++
 			case termbox.KeyArrowUp:
@@ -75,11 +77,13 @@ func Start() {
 	utils.Clrscr()
 
 	switch menuCursor {
-		case 0: game.Host()
-		case 1: game.Join()
-		case 2:
-			fmt.Println("thanks buddy, very cool.")
-			fmt.Println("exiting...")
-			return
+	case 0:
+		game.Host()
+	case 1:
+		game.Join()
+	case 2:
+		fmt.Println("thanks buddy, very cool.")
+		fmt.Println("exiting...")
+		return
 	}
 }

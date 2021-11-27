@@ -6,22 +6,27 @@ import (
 )
 
 var (
-	board [9]string
+	board  [9]string
 	cursor int
-	symb string
 )
 
 func render() {
 	utils.Clrscr()
-	fmt.Println("\n\n\n")
+	fmt.Print("\n\n\n")
 
 	var spaces string = GetSpaces(10)
 
 	for i := 0; i < 9; i += 3 {
-		fmt.Println(spaces + " ", board[i], "|", board[i + 1], "|", board[i + 2])
+		fmt.Println(spaces+" ", board[i], "|", board[i+1], "|", board[i+2])
 		if i < 6 {
 			fmt.Println(spaces, "-----------")
 		}
+	}
+
+	if isMyTurn {
+		fmt.Print("\nYour turn")
+	} else {
+		fmt.Print("\nYour friend's turn")
 	}
 }
 
