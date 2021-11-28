@@ -12,6 +12,7 @@ import (
 var (
 	keyboardEventsChan = make(chan keyboardEvent)
 	isMyTurn           = false
+	gameOver           = false
 	symb               rune
 )
 
@@ -60,6 +61,14 @@ func flickerCursor() {
 	}
 }
 
+func checkTie() bool {
+	if moves == 0 {
+		gameOver = true
+		return true
+	}
+	return false
+}
+
 func startGame(conn net.Conn) {
 	if err := termbox.Init(); err != nil {
 		panic(err)
@@ -102,11 +111,27 @@ mainloop:
 					moveVertical(-1)
 				}
 			case INSERT:
+				moves--
 				if !isMyTurn {
 					continue mainloop
 				}
 				board[cursor] = symb
-				conn.Write([]byte(strconv.Itoa(cursor) + "e"))
+
+				if checkTie() {
+					conn.Write([]byte(strconv.Itoa(cursor) + "\n"))
+					gameTie()
+					continue mainloop
+				}
+
+				won := checkWin()
+				if won {
+					conn.Write([]byte("lost\n"))
+					gameOver = true
+					gameOverPage(true)
+					continue mainloop
+				} else {
+					conn.Write([]byte(strconv.Itoa(cursor) + "\n"))
+				}
 				isMyTurn = false
 				render()
 				go receive(conn)
@@ -114,7 +139,7 @@ mainloop:
 				break mainloop
 			}
 		default:
-			if isMyTurn {
+			if isMyTurn && !gameOver {
 				render()
 				time.Sleep(time.Millisecond * 10)
 			}

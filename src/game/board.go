@@ -1,12 +1,14 @@
 package game
 
 import (
+	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
 )
 
 var (
 	board  [9]rune
 	cursor int
+	moves  = 9
 )
 
 const (
@@ -18,10 +20,11 @@ const (
 func render() {
 	termbox.Clear(defaultColor, defaultColor)
 
-	x, y := 10, 5
+	x, y := 10, 2
 
 	renderBoard(x, y)
 	renderBoardValues(x, y)
+	renderTurnMsg()
 
 	termbox.Flush()
 }
@@ -62,4 +65,44 @@ func blinkCursor() {
 		return
 	}
 	board[cursor] = ' '
+}
+
+func renderTurnMsg() {
+	var msg string
+
+	if isMyTurn {
+		msg = "your turn"
+	} else {
+		msg = FriendName + "'s turn"
+	}
+
+	tbprint(8, 9, msg)
+
+}
+
+func gameOverPage(won bool) {
+	termbox.Clear(defaultColor, defaultColor)
+	var msg string
+
+	if won {
+		msg = "Congratulations you won!"
+	} else {
+		msg = "You lost " + FriendName + " won."
+	}
+
+	tbprint(2, 3, msg)
+	termbox.Flush()
+}
+
+func gameTie() {
+	termbox.Clear(defaultColor, defaultColor)
+	tbprint(2, 3, "It's a tie. GG wellplayed!")
+	termbox.Flush()
+}
+
+func tbprint(x, y int, msg string) {
+	for _, c := range msg {
+		termbox.SetCell(x, y, c, defaultColor, bgColor)
+		x += runewidth.RuneWidth(c)
+	}
 }

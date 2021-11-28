@@ -24,6 +24,11 @@ func listenToKeyboard(evChan chan keyboardEvent) {
 	for {
 		switch ev := termbox.PollEvent(); ev.Type {
 		case termbox.EventKey:
+			if gameOver {
+				if ev.Key == termbox.KeyEnter {
+					evChan <- keyboardEvent{eventType: END, key: ev.Key}
+				}
+			}
 			switch ev.Key {
 			case termbox.KeyArrowLeft:
 				fallthrough
