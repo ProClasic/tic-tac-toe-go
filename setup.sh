@@ -1,5 +1,5 @@
 cd server
-npm install
+pip install pyngrok
 
 cd ../game
 go build
