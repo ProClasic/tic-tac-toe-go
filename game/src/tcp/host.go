@@ -13,8 +13,7 @@ func MakeHost() net.Conn {
 	}
 
 	fmt.Println(`
-			send this link to your friend localhost:8080
-			waiting for other player connection...
+waiting for connection. Make sure you are running ngrok server and your hotspot/wifi tethering is on.
 	`)
 
 	conn, err := ln.Accept()
