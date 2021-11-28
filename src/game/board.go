@@ -1,39 +1,65 @@
 package game
 
 import (
-	"fmt"
-	"ttt/src/utils"
+	"github.com/nsf/termbox-go"
 )
 
 var (
-	board  [9]string
+	board  [9]rune
 	cursor int
 )
 
+const (
+	defaultColor = termbox.ColorDefault
+	bgColor      = termbox.ColorDefault
+	snakeColor   = termbox.ColorGreen
+)
+
 func render() {
-	utils.Clrscr()
-	fmt.Print("\n\n\n")
+	termbox.Clear(defaultColor, defaultColor)
 
-	var spaces string = GetSpaces(10)
+	x, y := 10, 5
 
-	for i := 0; i < 9; i += 3 {
-		fmt.Println(spaces+" ", board[i], "|", board[i+1], "|", board[i+2])
-		if i < 6 {
-			fmt.Println(spaces, "-----------")
+	renderBoard(x, y)
+	renderBoardValues(x, y)
+
+	termbox.Flush()
+}
+
+func renderBoard(_x, _y int) {
+	x, y := _x, _y
+
+	for i := 0; i < 3; i, y = i+1, y+1 {
+		for j := 0; j < 2; j, x = j+1, x+4 {
+			termbox.SetCell(x, y, '|', defaultColor, bgColor)
 		}
+		x = _x - 3
+		if i == 2 {
+			break
+		}
+		for j := 0; j < 11; j, x = j+1, x+1 {
+			termbox.SetCell(x, y+1, '-', defaultColor, bgColor)
+		}
+		x, y = _x, y+1
 	}
+}
 
-	if isMyTurn {
-		fmt.Print("\nYour turn")
-	} else {
-		fmt.Print("\nYour friend's turn")
+func renderBoardValues(_x, _y int) {
+	x, y := _x-2, _y
+	c := 0
+	for i := 0; i < 3; i, y = i+1, y+1 {
+		for j := 0; j < 3; j, x = j+1, x+4 {
+			termbox.SetCell(x, y, board[c], defaultColor, bgColor)
+			c++
+		}
+		x, y = _x-2, y+1
 	}
 }
 
 func blinkCursor() {
-	if board[cursor] == " " {
-		board[cursor] = "_"
+	if board[cursor] == ' ' {
+		board[cursor] = '_'
 		return
 	}
-	board[cursor] = " "
+	board[cursor] = ' '
 }

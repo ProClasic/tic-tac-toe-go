@@ -58,7 +58,6 @@ func listenKeyboard(optChan chan int) {
 }
 
 func Start() {
-	utils.Clrscr()
 	fmt.Print("enter your name: ")
 	fmt.Scanln(&game.Username)
 	if err := termbox.Init(); err != nil {

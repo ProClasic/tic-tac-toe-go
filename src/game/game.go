@@ -12,14 +12,14 @@ import (
 var (
 	keyboardEventsChan = make(chan keyboardEvent)
 	isMyTurn           = false
-	symb               string
+	symb               rune
 )
 
 func moveHorizontal(mag int) {
 	for {
 		cursor = cursor + mag
 		validateCursor()
-		if board[cursor] == " " {
+		if board[cursor] == ' ' {
 			break
 		}
 	}
@@ -29,7 +29,7 @@ func moveVertical(mag int) {
 	var prevCursor int = cursor
 	cursor += 3 * mag
 	validateCursor()
-	if board[cursor] != " " {
+	if board[cursor] != ' ' {
 		cursor = prevCursor
 	}
 }
@@ -72,7 +72,7 @@ func startGame(conn net.Conn) {
 	}()
 
 	for i := 0; i < 9; i++ {
-		board[i] = " "
+		board[i] = ' '
 	}
 
 	go listenToKeyboard(keyboardEventsChan)
@@ -90,7 +90,7 @@ mainloop:
 				if !isMyTurn {
 					continue mainloop
 				}
-				board[cursor] = " "
+				board[cursor] = ' '
 				switch e.key {
 				case termbox.KeyArrowRight:
 					moveHorizontal(1)
@@ -116,6 +116,7 @@ mainloop:
 		default:
 			if isMyTurn {
 				render()
+				time.Sleep(time.Millisecond * 10)
 			}
 		}
 	}

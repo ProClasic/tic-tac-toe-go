@@ -17,10 +17,10 @@ func receive(conn net.Conn) {
 	if pos, err := strconv.ParseInt(strings.TrimSpace(data[:1]), 10, 8); err != nil {
 		panic(err)
 	} else {
-		if symb == "O" {
-			board[pos] = "X"
+		if symb == 'O' {
+			board[pos] = 'X'
 		} else {
-			board[pos] = "O"
+			board[pos] = 'O'
 		}
 	}
 

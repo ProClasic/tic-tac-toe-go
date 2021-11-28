@@ -11,13 +11,13 @@ var (
 func Host() {
 	conn := tcp.MakeHost()
 	isMyTurn = true
-	symb = "X"
+	symb = 'X'
 	startGame(conn)
 }
 
 func Join() {
 	conn := tcp.MakeClient()
-	symb = "O"
+	symb = 'O'
 	go receive(conn)
 	startGame(conn)
 }
