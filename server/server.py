@@ -4,6 +4,8 @@ import os
 def clear():
     os.system("clear")
 
+ngrok.set_auth_token("21HFfNCHfamQZRYAmDfSUKooqvH_4x2u6MwUMx6neEcpsn8Bz")
+
 tun = ngrok.connect(8080, "tcp")
 ngrok_process = ngrok.get_ngrok_process()
 
