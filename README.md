@@ -31,5 +31,5 @@ How to play:
 
 *** If you want to join a game ***
 
-1. You need to have a tcp link to proceed further.
+1. You need to have a tcp game link to proceed further.
 2. Just paste the tcp link in the "Join game" option.
